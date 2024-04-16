@@ -21,11 +21,11 @@ find_package(builtin_interfaces REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(geometry_msgs REQUIRED)
 
-rosidl_generate_interfaces(${PROJECT_NAME}
-  "msg/RigidBody.msg"
-  "msg/RigidBodies.msg"
-  DEPENDENCIES builtin_interfaces std_msgs geometry_msgs
- )
+# rosidl_generate_interfaces(${PROJECT_NAME}
+#   "msg/RigidBody.msg"
+#   "msg/RigidBodies.msg"
+#   DEPENDENCIES builtin_interfaces std_msgs geometry_msgs
+#  )
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)

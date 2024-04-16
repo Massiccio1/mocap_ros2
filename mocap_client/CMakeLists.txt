@@ -15,6 +15,8 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_components REQUIRED)
 find_package(mocap_interfaces REQUIRED)
+find_package(std_msgs REQUIRED)
+find_package(geometry_msgs REQUIRED)
 
 # Get NatNet SDK
 include(FetchContent)
@@ -28,7 +30,10 @@ set(NATNET_SDK_INCLUDE_DIR ${natnet_sdk_content_SOURCE_DIR}/include)
 set(NATNET_SDK_LIBRARY ${natnet_sdk_content_SOURCE_DIR}/lib/libNatNet.so)
 
 # Define target and include directories
-add_executable(mocap_client src/natnet_client.cpp src/natnet_handler.cpp)
+add_executable(mocap_client src/natnet_client.cpp src/natnet_handler.cpp )
+# ament_target_dependencies(mocap_client rclcpp geometry_msgs std_msgs)
+
+
 target_include_directories(mocap_client
 PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -37,11 +42,14 @@ PUBLIC
   ${NATNET_SDK_INCLUDE_DIR}
   ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
+
 target_link_libraries(mocap_client
 PUBLIC
   rclcpp::rclcpp
   ${mocap_interfaces_LIBRARIES}
   ${NATNET_SDK_LIBRARY}
+  geometry_msgs
+  std_msgs
 )
 
 # Install targets and files

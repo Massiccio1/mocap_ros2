@@ -19,6 +19,7 @@ void NatnetDriverNode::declare_parameters()
 {
   this->declare_parameter<bool>("dummy_send", true);
   this->declare_parameter<int>("send_rate", 120);
+  this->declare_parameter<int>("tracked_id", 20);
   this->declare_parameter<int>("number_of_bodies", 1);
   this->declare_parameter<float>("dummy_x", 0.0);
   this->declare_parameter<float>("dummy_y", 0.0);
@@ -74,7 +75,11 @@ void NatnetDriverNode::storeRigidBodyMessage(double currentSecsSinceEpoch, sRigi
 // Send Rigid body info
 void NatnetDriverNode::sendRigidBodyMessage(double currentSecsSinceEpoch, sRigidBodyData *bodies_ptr, int nRigidBodies)
 {
+  int tracked_id;
+  this->get_parameter("tracked_id", tracked_id);
+
   // Sort bodies by ID
+
   std::vector<sRigidBodyData> bodies;
   for (int i = 0; i < nRigidBodies; i++)
   {
@@ -90,29 +95,40 @@ void NatnetDriverNode::sendRigidBodyMessage(double currentSecsSinceEpoch, sRigid
   int64_t currentNanoSecsSinceEpoch = int64_t(currentSecsSinceEpoch * 1e9);
   rclcpp::Time currentTime = rclcpp::Time(currentNanoSecsSinceEpoch);
 
-  mocap_interfaces::msg::RigidBodies msg;
+  // mocap_interfaces::msg::RigidBodies msg;
+  geometry_msgs::PoseStamped msg;
+  bool found = false;
 
   for (int i = 0; i < nRigidBodies; i++)
   {
-    mocap_interfaces::msg::RigidBody rb;
+    // mocap_interfaces::msg::RigidBody rb;
 
-    rb.id = bodies[i].ID;
-    rb.pose_stamped.pose.position.x = bodies[i].x;
-    rb.pose_stamped.pose.position.y = bodies[i].y;
-    rb.pose_stamped.pose.position.z = bodies[i].z;
-    rb.pose_stamped.pose.orientation.x = bodies[i].qx;
-    rb.pose_stamped.pose.orientation.y = bodies[i].qy;
-    rb.pose_stamped.pose.orientation.z = bodies[i].qz;
-    rb.pose_stamped.pose.orientation.w = bodies[i].qw;
-    rb.mean_error = bodies[i].MeanError;
-    rb.tracking = bodies[i].params & 0x01;
-    rb.pose_stamped.header.stamp = currentTime;
-    rb.pose_stamped.header.frame_id = "mocap";
+    if (bodies[i].ID == tracked_id)
+    {
+      // rb.id = bodies[i].ID;
+      msg.pose.position.x = bodies[i].x;
+      msg.pose.position.y = bodies[i].y;
+      msg.pose.position.z = bodies[i].z;
+      msg.pose.orientation.x = bodies[i].qx;
+      msg.pose.orientation.y = bodies[i].qy;
+      msg.pose.orientation.z = bodies[i].qz;
+      msg.pose.orientation.w = bodies[i].qw;
 
-    msg.rigid_bodies.push_back(rb);
+      rb.pose_stamped.header.stamp = currentTime;
+      rb.pose_stamped.header.frame_id = "mocap";
+
+      found = true;
+    }
   }
-  // Publish
-  publisher_->publish(msg);
+  if (found)
+  {
+    // Publish
+    publisher_->publish(msg);
+  }
+  else
+  {
+    std::cout << "no body with ID: " << tracked_id << " found, skipping\n";
+  }
 }
 
 // Timer callback

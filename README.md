@@ -52,6 +52,7 @@ The `mocap_ros2` package provides a ROS2 node for publishing position data using
     pub_topic: "/mocap/rigid_bodies"
     record: false #true. Record flag for Motive software
     record_file_name: ""
+    tracked_id=20
 
    ```
 

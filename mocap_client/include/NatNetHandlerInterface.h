@@ -6,17 +6,20 @@
 #include <rclcpp/rclcpp.hpp>
 
 #include <NatNetTypes.h>
-#include <mocap_interfaces/msg/rigid_bodies.hpp>
+// #include <mocap_interfaces/msg/rigid_bodies.hpp>
+#include <geometry_msgs/msg/PoseStamped.h>
+// #include <geometry_msgs/Pose.h>
+#include <std_msgs/msgs/Header.h>
 
-class NatnetDriverNode: public rclcpp::Node
+class NatnetDriverNode : public rclcpp::Node
 {
 public:
     // Constructor
     NatnetDriverNode();
 
     // Functions to store and send rigid body data
-    void storeRigidBodyMessage(double currentSecsSinceEpoch, sRigidBodyData* bodies_ptr, int nRigidBodies);
-    void sendRigidBodyMessage(double currentSecsSinceEpoch, sRigidBodyData* bodies_ptr, int nRigidBodies);
+    void storeRigidBodyMessage(double currentSecsSinceEpoch, sRigidBodyData *bodies_ptr, int nRigidBodies);
+    void sendRigidBodyMessage(double currentSecsSinceEpoch, sRigidBodyData *bodies_ptr, int nRigidBodies);
     void sendDummyPos();
 
     // Getter methods
@@ -36,7 +39,7 @@ private:
 
     // Variables to store rigid bodies data temporarily
     double currentSecsSinceEpoch_;
-    sRigidBodyData* bodies_ptr_;
+    sRigidBodyData *bodies_ptr_;
     int nRigidBodies_;
 
     // Internal methods
@@ -45,5 +48,5 @@ private:
     void initialize_publisher();
     void setup_timer();
 };
- 
+
 #endif
