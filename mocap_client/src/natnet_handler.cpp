@@ -50,9 +50,11 @@ void NatnetDriverNode::setup_timer()
 {
   int rate;
   this->get_parameter("send_rate", rate);
-  std::chrono::milliseconds durationInMilliseconds(static_cast<int>(1000.0 / rate));
+  // std::chrono::milliseconds durationInMilliseconds(static_cast<float>(1000.0 / rate));
+  std::chrono::microseconds durationInMicroseconds(static_cast<int>(1000000.0 / rate));
+  // printf("%f", durationInMilliseconds(static_cast<float>(1000.0 / rate)));
   // auto durationInMilliseconds = std::chrono::milliseconds(static_cast<int>(1000.0 / rate));
-  this->timer_ = this->create_wall_timer(durationInMilliseconds, std::bind(&NatnetDriverNode::timer_callback, this));
+  this->timer_ = this->create_wall_timer(durationInMicroseconds, std::bind(&NatnetDriverNode::timer_callback, this));
 }
 
 // ID sorting
