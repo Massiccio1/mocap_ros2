@@ -34,7 +34,7 @@ The `mocap_ros2` package provides a ROS2 node for publishing position data using
    ```bash
    # Dummy parameters for testing
     dummy_send: false #true. Set it to false to connect to the mocap.
-    send_rate: 100
+    send_rate: 360
     number_of_bodies: 1 # Same values will be sent for all the bodies
     dummy_x: 0.0
     dummy_y: 0.0
@@ -78,7 +78,14 @@ After building adn sourcing the source code add the following includes
 from mocap_interfaces.msg import RigidBodies, RigidBody
 ```
 
+Subscribe to the topic
+
+```
+self.optitrack_subscriber= self.create_subscription(
+            RigidBodies, "/mocap/rigid_bodies", self.optitrack_pose_callback, qos.qos_profile_sensor_data)
+
 The node publishes Ros2 messages with the following structures
+```
 
 RigidBodies:
 
